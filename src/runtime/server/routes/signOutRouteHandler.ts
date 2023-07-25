@@ -1,8 +1,9 @@
 import {
   defineEventHandler, H3Event,
 } from 'h3';
-import { AuthCookieHandlers, IJwt } from '~/libs/auth/server';
-import { createAuthResponse } from '~/libs/auth/server/utils/authMethods';
+import { AuthCookieHandlers } from '../utils/AuthCookieHandlers';
+import { createAuthResponse } from '../utils/authMethods';
+import type { IJwt } from "../types";
 
 interface ISignOutRouteHandlerConfiguration<JwtPayload> {
   onRequest?: (jwtPayload: IJwt<JwtPayload> | null) => Promise<any>,

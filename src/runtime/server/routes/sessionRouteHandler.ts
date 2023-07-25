@@ -1,7 +1,7 @@
 import {
   defineEventHandler, H3Event,
 } from 'h3';
-import { AuthCookieHandlers } from '~/libs/auth/server/utils/AuthCookieHandlers';
+import { AuthCookieHandlers } from '../utils/AuthCookieHandlers';
 import { IJwt } from '../types';
 
 interface Options<JwtPayload = Record<string, any>> {

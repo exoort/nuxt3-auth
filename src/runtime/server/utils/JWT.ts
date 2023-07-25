@@ -13,7 +13,7 @@ export class JWT {
     );
   }
 
-  static decode<T>(token: string, signature: string): jsonwebtoken.JwtPayload | null {
+  static decode(token: string, signature: string): jsonwebtoken.JwtPayload | null {
     const payload = jsonwebtoken.verify(
       token,
       signature,

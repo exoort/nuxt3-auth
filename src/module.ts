@@ -2,18 +2,16 @@ import {
   defineNuxtModule,
   addPlugin,
   createResolver,
-  addComponent,
   addImports,
-  addImportsDir,
-  addTemplate
+  addTemplate, addComponent
 } from '@nuxt/kit'
 import { fileURLToPath } from 'url'
-import defu from "defu";
-import { genInterface } from 'knitwork'
+import { defu } from "defu";
 
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {}
+
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -37,45 +35,94 @@ export default defineNuxtModule<ModuleOptions>({
 
     // 5. Create virtual imports for server-side
     nuxt.hook('nitro:config', (nitroConfig) => {
-      nitroConfig.alias = nitroConfig.alias || {}
+      nitroConfig.alias = nitroConfig.alias || {};
 
       // Inline module runtime in Nitro bundle
+      // @ts-ignore
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
-        inline: [resolve('./runtime')]
+        inline: [
+          // Inline module runtime in Nitro bundle
+          resolve('./runtime')
+        ]
       })
-      nitroConfig.alias['#auth/client'] = resolve('./runtime/client')
-      nitroConfig.alias['#auth/server'] = resolve('./runtime/server')
+
+      nitroConfig.alias['#auth/server'] = resolve(runtimeDir, 'server');
     });
+
+    const runtimeServerDirPath = `import('${resolve(runtimeDir, "server/index")}')`;
 
     addTemplate({
       filename: 'types/auth.d.ts',
       getContents: () => [
-        'declare module \'#auth/client\' {',
-        `  const getServerSession: typeof import('${resolve('./runtime/server/services')}').getServerSession`,
-        `  const getToken: typeof import('${resolve('./runtime/server/services')}').getToken`,
-        `  const NuxtAuthHandler: typeof import('${resolve('./runtime/server/services')}').NuxtAuthHandler`,
+        'declare module "#auth/server" {',
+        `  const JWT: typeof ${runtimeServerDirPath}.JWT`,
+        `  const defineProvider: typeof ${runtimeServerDirPath}.defineProvider`,
+        `  const AuthCookieHandlers: typeof ${runtimeServerDirPath}.AuthCookieHandlers`,
+        `  type IJwt = typeof ${runtimeServerDirPath}.IJwt`,
+        `  type ISignInConfigure = typeof ${runtimeServerDirPath}.ISignInConfigure`,
+        `  type ISignInProviderSetup = typeof ${runtimeServerDirPath}.ISignInProviderSetup`,
+        `  type ISignInProvider = typeof ${runtimeServerDirPath}.ISignInProvider`,
+        `  const signOutRouteHandler: typeof ${runtimeServerDirPath}.signOutRouteHandler`,
+        `  const signInRouteHandler: typeof ${runtimeServerDirPath}.signInRouteHandler`,
+        `  const sessionRouteHandler:typeof ${runtimeServerDirPath}.sessionRouteHandler`,
+        `  const CredentialsProvider: typeof ${runtimeServerDirPath}.CredentialsProvider`,
+        `  const FacebookOauthProvider: typeof ${runtimeServerDirPath}.FacebookOauthProvider`,
+        `  const GoogleOauthProvider: typeof ${runtimeServerDirPath}.GoogleOauthProvider`,
         '}'
       ].join('\n')
-    })
+    });
 
     nuxt.hook('prepare:types', (options) => {
       options.references.push({ path: resolve(nuxt.options.buildDir, 'types/auth.d.ts') })
     });
 
+
+    const clientLib = resolve(runtimeDir, 'client/index');
     // Add imports
-    // const imports = [
-    //   {
-    //     name: "forClient",
-    //     path: resolver.resolve(runtimeDir, 'client/index')
-    //   },
-    //
-    //   {
-    //     name: "forServer",
-    //     path: resolver.resolve(runtimeDir, 'server/index')
-    //   },
-    // ];
-    // for (const toImport of imports) {
-    //   addImports({ name: toImport.name, as: toImport.name, from: toImport.path });
-    // }
+    const imports = [
+      {
+        name: "CredentialsProvider",
+        path: clientLib,
+      },
+      {
+        name: "FacebookOauthProvider",
+        path: clientLib,
+      },
+      {
+        name: "FacebookOauthProviderError",
+        path: clientLib,
+      },
+      {
+        name: "GoogleOauthProvider",
+        path: clientLib,
+      },
+      {
+        name: "GoogleOauthProviderError",
+        path: clientLib,
+      },
+      {
+        name: "createSessionMiddleware",
+        as: "createAuthSessionMiddleware",
+        path: clientLib,
+      },
+      {
+        name: "AuthProvider",
+        as: "AuthProvider",
+        path: clientLib,
+      },
+      {
+        name: "AuthProviderConfig",
+        as: "AuthProviderConfig",
+        path: clientLib,
+      },
+    ];
+    for (const toImport of imports) {
+      addImports({ name: toImport.name, as: toImport.name, from: toImport.path });
+    }
+
+    addComponent({
+      name: 'OauthCallback',
+      filePath: resolve(runtimeDir, 'client/components/OauthCallback.vue'),
+    });
   }
 })

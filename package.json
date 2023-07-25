@@ -10,6 +10,25 @@
       "types": "./dist/types.d.ts",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
+    },
+    "./runtime/client": {
+      "types": "./dist/runtime/client/types.d.ts",
+      "import": "./dist/runtime/client/index.mjs"
+    },
+    "./runtime/server": {
+      "types": "./dist/runtime/server/types.d.ts",
+      "import": "./dist/runtime/server/index.mjs"
+    },
+    "./runtime/plugin": {
+      "types": "./dist/runtime/plugin.d.ts",
+      "import": "./dist/runtime/plugin.mjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "runtime/client": ["dist/runtime/client/types.d.ts"],
+      "runtime/server": ["dist/runtime/server/types.d.ts"],
+      "runtime/plugin": ["dist/runtime/plugin.d.ts"]
     }
   },
   "main": "./dist/module.cjs",
@@ -23,13 +42,15 @@
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "build-package:local": "nuxt-module-build && npm pack",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },
   "dependencies": {
     "@nuxt/kit": "^3.5.2",
-    "jsonwebtoken": "^9.0.0"
+    "jsonwebtoken": "^9.0.0",
+    "defu": "^6.1.2"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",

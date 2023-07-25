@@ -1,13 +1,13 @@
-export * from './types';
+export { AuthProvider, AuthProviderConfig } from './types';
 
 export { default as OauthCallback } from './components/OauthCallback.vue';
 
-export * from './composables/useAuth';
+export { useAuth } from './composables/useAuth';
 
-export * from './providers/CredentialsProvider';
+export { CredentialsProvider } from './providers/CredentialsProvider';
 
-export * from './providers/FacebookOauthProvider';
+export { FacebookOauthProvider, FacebookOauthProviderError } from './providers/FacebookOauthProvider';
 
-export * from './providers/GoogleOauthProvider';
+export { GoogleOauthProvider, GoogleOauthProviderError } from './providers/GoogleOauthProvider';
 
-export * from './middlewares/createSessionMiddleware';
+export { createSessionMiddleware } from './middlewares/createSessionMiddleware';

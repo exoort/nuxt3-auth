@@ -1,15 +1,15 @@
-export * from './utils/JWT';
+export { JWT } from './utils/JWT';
 
-export * from './utils/defineProvider';
+export { defineProvider } from './utils/defineProvider';
 
-export * from './utils/AuthCookieHandlers';
+export { AuthCookieHandlers } from './utils/AuthCookieHandlers';
 
-export * from './types';
+export { ISignInConfigure, IJwt, ISignInProvider, ISignInProviderSetup } from './types';
 
-export * from './routes/signOutRouteHandler';
-export * from './routes/signInRouteHandler';
-export * from './routes/sessionRouteHandler';
+export { signOutRouteHandler } from './routes/signOutRouteHandler';
+export { signInRouteHandler } from './routes/signInRouteHandler';
+export { sessionRouteHandler } from './routes/sessionRouteHandler';
 
-export * from './signInProviders/CredentialsProvider';
-export * from './signInProviders/FacebookOauthProvider';
-export * from './signInProviders/GoogleOauthProvider';
+export { CredentialsProvider } from './signInProviders/CredentialsProvider';
+export { FacebookOauthProvider } from './signInProviders/FacebookOauthProvider';
+export { GoogleOauthProvider } from './signInProviders/GoogleOauthProvider';
